@@ -1,0 +1,19 @@
+{
+  "name": "cloud-ffmpeg-kue",
+  "version": "0.0.2",
+  "description": "",
+  "main": "/bin/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "kue": "^0.11.6",
+    "cloud-ffmpeg": "^1.0.6"
+  },
+  "bin": {
+    "cloud-ffmpeg-kue": "./bin/main.js"
+  },
+  "repository": "faketraveler/cloud-ffmpeg-kue"
+}
