@@ -2,40 +2,59 @@
 
 const Kue = require('kue');
 const CloudFFmpeg = require('cloud-ffmpeg');
+const program = require('commander');
+
+program
+  .version('0.1.0')
+  .option('-p, --port [port]', 'Select the port for express based web-UI (defaults to 3000)')
+  .option('-q, --prefix [prefix]', "Prefix for message queue (defaults to 'q')")
+  .option('-r, --redis-url <url>', 'Url path to redis')
+  .option('-t, --temp-path [path]', "tempPath for cloud-ffmpeg object (defaults '/tmp/cloud-ffmpeg/')")
+  .option('-w, --web-title [string]', "Give a title for the web-UI (defaults to 'cloud-ffmpeg')")
+  .parse(process.argv);
+
+if (program.redisUrl === undefined) {
+  console.log('Redis url must be provided!');
+  process.exit();
+}
+
+// Parsing redis url into an object
+let redisConfig = {};
+let redisURL = program.redisUrl;
+redisURL = redisURL.split('//')[1];
+redisURL = redisURL.split('@');
+if (redisURL.length > 1) {
+  redisConfig.auth = redisURL.shift().split(':')[1];
+}
+redisURL = redisURL[0].split(':');
+redisConfig.host = redisURL.shift();
+redisURL = redisURL[0].split('/');
+redisConfig.port = redisURL.shift();
+if (redisURL.length > 0) 
+  redisConfig.db = parseInt(redisURL.pop());
+// Finish parsing redis url
 
 const config = {
-  tempPath: '/tmp/cloud-ffmpeg/'
+  tempPath: program.tempPath || '/tmp/cloud-ffmpeg/'
 };
 
-var cloudFFmpeg = new CloudFFmpeg(config);
-
 var queue = Kue.createQueue({
-  redis: {
-    port: 6379, // default
-    host: "192.168.231.223",
-    auth: "temp1234",
-  }
-  // or simply...
-  // redis: 'redis://example.com:1234?redis_option=value&redis_option=value'
+  prefix: program.prefix || 'q',
+  redis: redisConfig
 });
 
 // Run UI
-Kue.app.set('title', 'cloud-ffmpeg');
-Kue.app.listen(3000);
-
-queue
-  .on('error', err => {
-    console.log('Enqueue error!');
-    console.log(err);
-  })
-  .on('job remove', () => {
-    cloudFFmpeg.emit('kill');
-  });
+Kue.app.set('title', program.webTitle || 'cloud-ffmpeg');
+Kue.app.listen(parseInt(program.port) || 3000);
 
 queue.watchStuckJobs(500);
+queue
+  .on('error', err => {
+    console.log(err);
+  });
 
-queue.process('cloud-ffmpeg', (job, done) => {
-  let ffmpegTask = cloudFFmpeg.run(job.data)
+queue.process('cloud-ffmpeg', (job, ctx, done) => {
+  let cloudFFmpeg = new CloudFFmpeg(config).run(job.data)
     .on('error', error => {
       done();
       console.log(error);
@@ -48,4 +67,10 @@ queue.process('cloud-ffmpeg', (job, done) => {
       done();
       console.log("FFmpeg task completed!");
     });
+  job.subscribe(() => {
+    job.on("remove", (id, type) => {
+      if (type === "cloud-ffmpeg")
+        cloudFFmpeg.emit('kill');
+    });
+  });
 });
