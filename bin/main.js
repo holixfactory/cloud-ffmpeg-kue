@@ -68,7 +68,7 @@ queue.process('cloud-ffmpeg', (job, ctx, done) => {
       console.log("FFmpeg task completed!");
     });
   job.subscribe(() => {
-    job.on("remove", (id, type) => {
+    job.on("remove", type => {
       if (type === "cloud-ffmpeg")
         cloudFFmpeg.emit('kill');
     });

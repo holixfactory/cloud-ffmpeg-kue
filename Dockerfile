@@ -13,7 +13,7 @@ RUN apk add --update --no-cache\
       bzip2 \
       zlib-dev \
       openssl-dev \
-	  libass-dev \
+      libass-dev \
       freetype-dev \
       lame-dev \
       libogg-dev \
