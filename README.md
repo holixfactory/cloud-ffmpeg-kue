@@ -10,7 +10,7 @@ Requirements
 ------------
 
 - `Node.js` 6.11.x (or later)
-- `cloud-ffmpeg` 1.0.7 (or later)
+- `cloud-ffmpeg` 1.0.8 (or later)
 - `kue` 0.11.x
 - Redis 4.x (or later)
 - and more specified in [package.json](package.json) under dependencies
@@ -51,7 +51,7 @@ Of these options, url for Redis is the only required option.
 
 To execute, in any shell or terminal emulator:
 
-    cloud-ffmpeg -r redis://:password@xxx.xxx.xxx.xxx:6537/
+    cloud-ffmpeg-kue -r redis://:password@xxx.xxx.xxx.xxx:6537/
     
 
 Dockerfile
