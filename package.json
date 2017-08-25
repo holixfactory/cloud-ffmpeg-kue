@@ -1,6 +1,6 @@
 {
   "name": "cloud-ffmpeg-kue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "/bin/main.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "",
   "dependencies": {
     "commander": "^2.11.0",
-    "cloud-ffmpeg": "^1.0.7",
+    "cloud-ffmpeg": "^1.0.8",
     "kue": "^0.11.6"
   },
   "bin": {

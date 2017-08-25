@@ -126,16 +126,17 @@ RUN npm install --global cloud-ffmpeg-kue; \
   apk del \
     build-base \
     binutils-gold \
+    yasm-dev \
+    nasm \
     gnupg \
     xz \
     linux-headers \
     curl \
     tar \
+    zlib-dev \
     bzip2 \
     x264 \
     openssl \
-    yasm-dev \
-    nasm \
     python \
   && rm -rf /var/cache/apk/*; 
 

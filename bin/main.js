@@ -56,7 +56,7 @@ queue
 queue.process('cloud-ffmpeg', (job, ctx, done) => {
   let cloudFFmpeg = new CloudFFmpeg(config).run(job.data)
     .on('error', error => {
-      done();
+      done(error);
       console.log(error);
     })
     .on('progress', progress => {
